@@ -31,8 +31,10 @@ func (i *InitContainerAdder) Handle(ctx context.Context, req admission.Request) 
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	if pod.Annotations == nil {
-		pod.Annotations = map[string]string{}
+	// check if pod has annotation for encrypted secret and is set to true
+	if addInitcontainer, ok := pod.Annotations["opensecrecy.io/inject-encrypted-secrets"]; !ok || addInitcontainer != "true" {
+		i.log.Info("pod does not have annotation for encrypted secret or is not set to true")
+		return admission.Allowed("")
 	}
 
 	pod.Spec.InitContainers = append(pod.Spec.InitContainers, corev1.Container{
