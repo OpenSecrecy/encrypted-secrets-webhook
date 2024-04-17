@@ -39,10 +39,27 @@ func (i *InitContainerAdder) Handle(ctx context.Context, req admission.Request) 
 
 	pod.Spec.InitContainers = append(pod.Spec.InitContainers, corev1.Container{
 		Name:  "init-container",
-		Image: "busybox",
+		Image: "opensecrecy/initcontainer:v1alpha3",
 		Command: []string{
-			"echo",
-			"Hello, World!",
+			"/manager",
+			"-encryptedsecret",
+			"encryptedsecret-sample",
+			"-namespace",
+			"default",
+		},
+		VolumeMounts: []corev1.VolumeMount{
+			{
+				Name:      "injected-secrets",
+				MountPath: "/opt/secrets",
+			},
+		},
+	})
+
+	// add volume to pod
+	pod.Spec.Volumes = append(pod.Spec.Volumes, corev1.Volume{
+		Name: "injected-secrets",
+		VolumeSource: corev1.VolumeSource{
+			EmptyDir: &corev1.EmptyDirVolumeSource{},
 		},
 	})
 
