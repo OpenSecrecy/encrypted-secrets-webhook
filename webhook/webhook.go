@@ -32,7 +32,7 @@ func (i *InitContainerAdder) Handle(ctx context.Context, req admission.Request) 
 	}
 
 	// check if pod has annotation for encrypted secret and is set to true
-	if addInitcontainer, ok := pod.Annotations["opensecrecy.io/inject-encrypted-secrets"]; !ok || addInitcontainer != "true" {
+	if addInitcontainer, ok := pod.Annotations["secrets.opensecrecy.org/inject-encrypted-secrets"]; !ok || addInitcontainer != "true" {
 		i.log.Info("pod does not have annotation for encrypted secret or is not set to true")
 		return admission.Allowed("")
 	}
