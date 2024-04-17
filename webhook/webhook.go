@@ -37,6 +37,7 @@ func (i *InitContainerAdder) Handle(ctx context.Context, req admission.Request) 
 		return admission.Allowed("")
 	}
 
+	// ToDo: use the container config from a configmap for easier updates
 	pod.Spec.InitContainers = append(pod.Spec.InitContainers, corev1.Container{
 		Name:  "init-container",
 		Image: "opensecrecy/initcontainer:v1alpha3",
